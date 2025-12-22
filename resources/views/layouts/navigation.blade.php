@@ -35,12 +35,12 @@
 
             @else
                 <!-- Data Siswa (User) -->
-                <a href="{{ route('dashboard') }}"
-                   class="flex items-center gap-4 py-3 px-6 transition-all {{ request()->routeIs('dashboard') ? 'bg-white text-[#E31E24] rounded-r-full mr-4 shadow-md font-bold' : 'hover:bg-red-700 text-white' }}">
+                <a href="{{ route('siswa.index') }}"
+                   class="flex items-center gap-4 py-3 px-6 transition-all {{ request()->routeIs('siswa.index') ? 'bg-white text-[#E31E24] rounded-r-full mr-4 shadow-md font-bold' : 'hover:bg-red-700 text-white' }}">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4m0 5c0 2.21-3.58 4-8 4s-8-1.79-8-4"></path>
                     </svg>
-                    <span class="{{ request()->routeIs('dashboard') ? 'font-bold' : '' }}">Data Siswa</span>
+                    <span class="{{ request()->routeIs('siswa.index') ? 'font-bold' : '' }}">Data Siswa</span>
                 </a>
 
                 <!-- Pengumuman (User) -->

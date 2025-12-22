@@ -55,7 +55,6 @@
                                         </td>
                                         <td class="px-6 py-1 text-center">
                                             <div class="flex items-center justify-center gap-3">
-                                                <!-- Detail -->
                                                 <button onclick="showDetail({{ $sekolah->id }})"
                                                         class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition duration-200"
                                                         title="Detail">
@@ -65,7 +64,6 @@
                                                     </svg>
                                                 </button>
 
-                                                <!-- Edit -->
                                                 <button onclick="openEditModal({{ $sekolah->id }})"
                                                         class="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition duration-200"
                                                         title="Edit">
@@ -74,7 +72,6 @@
                                                     </svg>
                                                 </button>
 
-                                                <!-- Delete -->
                                                 <form action="{{ route('sekolah.destroy', $sekolah) }}"
                                                       method="POST"
                                                       class="inline"
@@ -106,9 +103,55 @@
                         </table>
                     </div>
 
-                    <div class="mt-8">
-                        {{ $sekolahs->links() }}
+                    {{-- --- CUSTOM PAGINATION --- --}}
+                    @if ($sekolahs->hasPages())
+                    <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-100 pt-6">
+                        {{-- Info Data --}}
+                        <p class="text-sm text-gray-600">
+                            Menampilkan <span class="font-bold">{{ $sekolahs->firstItem() }}</span>
+                            sampai <span class="font-bold">{{ $sekolahs->lastItem() }}</span>
+                            dari <span class="font-bold">{{ $sekolahs->total() }}</span> data
+                        </p>
+
+                        {{-- Tombol Navigasi --}}
+                        <nav class="flex items-center gap-1">
+                            {{-- Previous --}}
+                            @if ($sekolahs->onFirstPage())
+                                <span class="px-3 py-2 bg-gray-50 text-gray-300 rounded-lg cursor-not-allowed border border-gray-100">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </span>
+                            @else
+                                <a href="{{ $sekolahs->previousPageUrl() }}" class="px-3 py-2 bg-white text-gray-600 hover:bg-red-50 hover:text-[#E31E24] border border-gray-200 rounded-lg transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </a>
+                            @endif
+
+                            {{-- Page Numbers (Range limited to 2 pages around current) --}}
+                            @foreach ($sekolahs->getUrlRange(max(1, $sekolahs->currentPage() - 2), min($sekolahs->lastPage(), $sekolahs->currentPage() + 2)) as $page => $url)
+                                @if ($page == $sekolahs->currentPage())
+                                    <span class="px-4 py-2 bg-[#E31E24] text-white font-bold rounded-lg border border-[#E31E24]">
+                                        {{ $page }}
+                                    </span>
+                                @else
+                                    <a href="{{ $url }}" class="px-4 py-2 bg-white text-gray-600 hover:border-[#E31E24] hover:text-[#E31E24] border border-gray-200 rounded-lg transition">
+                                        {{ $page }}
+                                    </a>
+                                @endif
+                            @endforeach
+
+                            {{-- Next --}}
+                            @if ($sekolahs->hasMorePages())
+                                <a href="{{ $sekolahs->nextPageUrl() }}" class="px-3 py-2 bg-white text-gray-600 hover:bg-red-50 hover:text-[#E31E24] border border-gray-200 rounded-lg transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </a>
+                            @else
+                                <span class="px-3 py-2 bg-gray-50 text-gray-300 rounded-lg cursor-not-allowed border border-gray-100">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </span>
+                            @endif
+                        </nav>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -177,7 +220,7 @@
         </div>
     </div>
 
-    {{-- Modal Edit (sama desainnya dengan Create, hanya judul dan field password opsional) --}}
+    {{-- Modal Edit --}}
     <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
             <div class="flex justify-between items-center p-6 border-b">
@@ -275,7 +318,6 @@
     </div>
 
     <script>
-        // Fungsi modal tetap sama
         function openCreateModal() {
             document.getElementById('createModal').classList.remove('hidden');
         }
@@ -321,14 +363,6 @@
             document.getElementById('showModal').classList.add('hidden');
         }
 
-        // // Close modal ketika klik di luar
-        // window.addEventListener('click', function(event) {
-        //     if (event.target.id === 'createModal') closeCreateModal();
-        //     if (event.target.id === 'editModal') closeEditModal();
-        //     if (event.target.id === 'showModal') closeShowModal();
-        // });
-
-        // Auto open create modal jika ada error validasi
         @if($errors->any() && request()->isMethod('post'))
             openCreateModal();
         @endif

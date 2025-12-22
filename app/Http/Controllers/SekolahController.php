@@ -13,15 +13,14 @@ class SekolahController extends Controller
     {
         $sekolahs = User::sekolah()
             ->latest()
-            ->paginate(10);
-
+            ->paginate(2);
         return view('sekolah.index', compact('sekolahs'));
     }
 
-    public function create()
-    {
-        return view('sekolah.index');
-    }
+    // public function create()
+    // {
+    //     return view('sekolah.index');
+    // }
 
     public function store(Request $request)
     {
