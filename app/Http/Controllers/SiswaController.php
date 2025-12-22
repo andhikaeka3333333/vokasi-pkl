@@ -10,8 +10,9 @@ class SiswaController extends Controller
 {
     public function index()
     {
-        // Mengambil semua data siswa beserta data user (sekolahnya)
-        $siswas = Siswa::paginate(10); // Menampilkan 10 data per halaman
+        // FILTER: Hanya ambil siswa yang user_id-nya sama dengan ID user yang sedang login
+        $siswas = Siswa::where('user_id', auth()->id())->paginate(2);
+
         return view('siswa.index', compact('siswas'));
     }
 
@@ -32,7 +33,7 @@ class SiswaController extends Controller
         ]);
 
         Siswa::create([
-            'user_id' => auth()->id(),
+            'user_id' => auth()->id(), // Menyimpan ID user yang login
             'nama_sekolah' => $request->nama_sekolah,
             'nis' => $request->nis,
             'nama' => $request->nama,
@@ -47,11 +48,21 @@ class SiswaController extends Controller
 
     public function edit(Siswa $siswa)
     {
+        // KEAMANAN: Cek apakah data ini milik user yang login
+        if ($siswa->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke data ini.');
+        }
+
         return view('siswa.edit', compact('siswa'));
     }
 
     public function update(Request $request, Siswa $siswa)
     {
+        // KEAMANAN: Cek apakah data ini milik user yang login
+        if ($siswa->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke data ini.');
+        }
+
         $request->validate([
             'nis' => 'required|unique:siswa,nis,' . $siswa->id,
             'nama' => 'required|string|max:255',
@@ -68,6 +79,11 @@ class SiswaController extends Controller
 
     public function destroy(Siswa $siswa)
     {
+        // KEAMANAN: Cek apakah data ini milik user yang login
+        if ($siswa->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke data ini.');
+        }
+
         $siswa->delete();
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil dihapus.');
     }
